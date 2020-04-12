@@ -60,7 +60,7 @@ def getLastUpdate():
 	lastUpdateList = re.findall('<p.*?</p>', lastUpdateStr)
 	lastUpdateList = [re.sub('<p.*?>|</p>', '', p) for p in lastUpdateList]
 
-	lastUpdateList[0] = '0' + lastUpdateList[0] if len(lastUpdateList[0]) else lastUpdateList[0]
+	lastUpdateList[0] = '0' + lastUpdateList[0] if len(lastUpdateList[0]) == 1 else lastUpdateList[0]
 	lastUpdated = lastUpdateList[2] + '-' + monthsTRtoIndex[lastUpdateList[1]] + '-' + lastUpdateList[0]
 
 
