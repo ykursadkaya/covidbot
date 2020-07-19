@@ -54,7 +54,7 @@ def dateTRtoEN(date):
 def getLastUpdate():
 	global lastUpdated
 
-	lastUpdateStr = re.findall('<div\sclass="takvim text-center">.*?</div>', sourceCleaned)[0]
+	lastUpdateStr = re.findall('<div\sclass="takvim text-center ">.*?</div>', sourceCleaned)[0]
 	lastUpdateStr = re.sub('<div.*?>|</div>', '', lastUpdateStr)
 	lastUpdateStr = replaceTR_HTML(lastUpdateStr)
 	lastUpdateList = re.findall('<p.*?</p>', lastUpdateStr)
