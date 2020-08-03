@@ -103,7 +103,7 @@ def createJSONs():
 	global jsonToday, jsonTotal, jsonAll
 
 	totalLabelsTRtoEN = {'TOPLAM TEST SAYISI': 'test',
-						 'TOPLAM HASTA SAYISI': 'patient',
+						 'TOPLAM HASTA SAYISI': 'case',
 						 'TOPLAM VEFAT SAYISI': 'death',
 						 'HASTALARDA ZATÜRRE ORANI (%)': 'pneumoniaPercent',
 						 'AĞIR HASTA SAYISI': 'seriouslyIllPatient',
