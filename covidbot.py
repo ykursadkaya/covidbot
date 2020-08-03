@@ -11,27 +11,28 @@ jsonToday = {}
 jsonTotal = {}
 jsonAll = {}
 jsonDataset = {}
+sentData = {'today': {}, 'total': {}}
 sourceCode = ''
 sourceCleaned = ''
 lastUpdated = ''
 telegramAPI_Token = os.getenv('TELEGRAM_API_TOKEN', '')
 telegramChatID = os.getenv('TELEGRAM_CHAT_ID', '')
-checkInterval = 300 # seconds
+checkInterval = 300  # seconds
 
 monthsTRtoEN = {'OCAK': 'JANUARY', 'ŞUBAT': 'FEBRUARY', 'MART': 'MARCH',
 				'NİSAN': 'APRIL', 'MAYIS': 'MAY', 'HAZİRAN': 'JUNE',
 				'TEMMUZ': 'JULY', 'AĞUSTOS': 'AUGUST', 'EYLÜL': 'SEPTEMBER',
 				'EKİM': 'OCTOBER', 'KASIM': 'NOVEMBER', 'ARALIK': 'DECEMBER'}
 monthsTRtoIndex = {'OCAK': '01', 'ŞUBAT': '02', 'MART': '03',
-					'NİSAN': '04', 'MAYIS': '05', 'HAZİRAN': '06',
-					'TEMMUZ': '07', 'AĞUSTOS': '08', 'EYLÜL': '09',
-					'EKİM': '10', 'KASIM': '11', 'ARALIK': '12'}
+				   'NİSAN': '04', 'MAYIS': '05', 'HAZİRAN': '06',
+				   'TEMMUZ': '07', 'AĞUSTOS': '08', 'EYLÜL': '09',
+				   'EKİM': '10', 'KASIM': '11', 'ARALIK': '12'}
 # newLine = '%0A'
 
 replaceTR_HTML = (lambda x: x.replace('&#x11E;', 'Ğ').replace('&#x130;', 'İ').replace('&#x15E;', 'Ş'))
 replaceTRUpper = (lambda x: x
-				.replace('Ç', 'C').replace('İ', 'I').replace('Ğ', 'G')
-				.replace('Ö', 'O').replace('Ş', 'S').replace('Ü', 'U'))
+				  .replace('Ç', 'C').replace('İ', 'I').replace('Ğ', 'G')
+				  .replace('Ö', 'O').replace('Ş', 'S').replace('Ü', 'U'))
 
 
 class TimerThread(Thread):
@@ -102,15 +103,15 @@ def createJSONs():
 	global jsonToday, jsonTotal, jsonAll
 
 	totalLabelsTRtoEN = {'TOPLAM TEST SAYISI': 'test',
-						'TOPLAM HASTA SAYISI': 'patient',
-						'TOPLAM VEFAT SAYISI': 'death',
-						'HASTALARDA ZATÜRRE ORANI (%)': 'pneumoniaPercent',
-						'AĞIR HASTA SAYISI': 'seriouslyIllPatient',
-						'TOPLAM İYİLEŞEN HASTA SAYISI': 'recoveredPatient'}
+						 'TOPLAM HASTA SAYISI': 'patient',
+						 'TOPLAM VEFAT SAYISI': 'death',
+						 'HASTALARDA ZATÜRRE ORANI (%)': 'pneumoniaPercent',
+						 'AĞIR HASTA SAYISI': 'seriouslyIllPatient',
+						 'TOPLAM İYİLEŞEN HASTA SAYISI': 'recoveredPatient'}
 	todayLabelsTRtoEN = {'BUGÜNKÜ TEST SAYISI': 'test',
-						'BUGÜNKÜ HASTA SAYISI': 'case',
-						'BUGÜNKÜ VEFAT SAYISI': 'death',
-						'BUGÜNKÜ İYİLEŞEN SAYISI': 'recoveredPatient'}
+						 'BUGÜNKÜ HASTA SAYISI': 'case',
+						 'BUGÜNKÜ VEFAT SAYISI': 'death',
+						 'BUGÜNKÜ İYİLEŞEN SAYISI': 'recoveredPatient'}
 
 	for key, value in todayData.items():
 		jsonToday[todayLabelsTRtoEN[key]] = int(value.replace('.', ''))
@@ -155,7 +156,8 @@ def getData():
 
 		getLastUpdate()
 		prepareData()
-		sendTelegram()
+		if (sentData['total'] != totalData) or (sentData['today'] != todayData):
+			sendTelegram()
 		createJSONs()
 		prepareDataset()
 	except Exception as e:
@@ -185,6 +187,8 @@ def sendTelegram():
 	try:
 		r = requests.post(telegramURL, headers=headers, data=json.dumps(payload))
 		print(r.status_code)
+		sentData['today'] = dict(todayData)
+		sentData['total'] = dict(totalData)
 	except Exception as e:
 		print('>>>[ERROR] Cannot send message !', e)
 
@@ -194,7 +198,7 @@ def getToday():
 	if jsonToday != {}:
 		responseData = dict(jsonToday)
 		responseData['lastUpdated'] = lastUpdated
-		return(jsonify(responseData), 200)
+		return (jsonify(responseData), 200)
 	else:
 		return ('', 404)
 
@@ -204,7 +208,7 @@ def getTotal():
 	if jsonTotal != {}:
 		responseData = dict(jsonTotal)
 		responseData['lastUpdated'] = lastUpdated
-		return(jsonify(responseData), 200)
+		return (jsonify(responseData), 200)
 	else:
 		return ('', 404)
 
@@ -214,7 +218,7 @@ def getAll():
 	if jsonAll != {}:
 		responseData = dict(jsonAll)
 		responseData['lastUpdated'] = lastUpdated
-		return(jsonify(responseData), 200)
+		return (jsonify(responseData), 200)
 	else:
 		return ('', 404)
 
@@ -224,7 +228,7 @@ def getAllDataset():
 	if jsonDataset != {}:
 		responseData = dict(jsonDataset)
 		responseData['lastUpdated'] = lastUpdated
-		return(jsonify(responseData), 200)
+		return (jsonify(responseData), 200)
 	else:
 		return ('', 404)
 
@@ -236,7 +240,7 @@ def getCasesDataset():
 						'dateLabels': jsonDataset['dateLabels'],
 						'cases': jsonDataset['cases'],
 						'lastUpdated': lastUpdated}
-		return(jsonify(responseData), 200)
+		return (jsonify(responseData), 200)
 	else:
 		return ('', 404)
 
@@ -248,7 +252,7 @@ def getDeathsDataset():
 						'dateLabels': jsonDataset['dateLabels'],
 						'deaths': jsonDataset['deaths'],
 						'lastUpdated': lastUpdated}
-		return(jsonify(responseData), 200)
+		return (jsonify(responseData), 200)
 	else:
 		return ('', 404)
 
@@ -258,4 +262,4 @@ if __name__ == '__main__':
 	stopFlag = Event()
 	thread = TimerThread(stopFlag)
 	thread.start()
-	app.run(debug=False, port=5000, host= '0.0.0.0')
+	app.run(debug=False, port=5000, host='0.0.0.0')
