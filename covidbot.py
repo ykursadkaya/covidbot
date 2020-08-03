@@ -92,6 +92,9 @@ def prepareDataset():
 	for date in dates:
 		datesEN.append(dateTRtoEN(date))
 
+	cases = list(map(int, cases))
+	deaths = list(map(int, deaths))
+
 	jsonDataset = {'dates': datesEN, 'dateLabels': dateLabels, 'cases': cases, 'deaths': deaths}
 
 
@@ -110,9 +113,13 @@ def createJSONs():
 						'BUGÜNKÜ İYİLEŞEN SAYISI': 'recoveredPatient'}
 
 	for key, value in todayData.items():
-		jsonToday[todayLabelsTRtoEN[key]] = value
+		jsonToday[todayLabelsTRtoEN[key]] = int(value.replace('.', ''))
 	for key, value in totalData.items():
-		jsonTotal[totalLabelsTRtoEN[key]] = value
+		if totalLabelsTRtoEN[key] == 'pneumoniaPercent':
+			jsonTotalValue = float(value.replace('%', '').replace(',', '.'))
+		else:
+			jsonTotalValue = int(value.replace('.', ''))
+		jsonTotal[totalLabelsTRtoEN[key]] = jsonTotalValue
 	jsonAll = {'today': jsonToday, 'total': jsonTotal}
 
 
