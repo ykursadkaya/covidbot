@@ -99,13 +99,13 @@ def createJSONs():
 	global jsonToday, jsonTotal, jsonAll
 
 	totalLabelsTRtoEN = {'TOPLAM TEST SAYISI': 'test',
-						'TOPLAM VAKA SAYISI': 'case',
+						'TOPLAM HASTA SAYISI': 'patient',
 						'TOPLAM VEFAT SAYISI': 'death',
-						'TOPLAM YOĞUN BAKIM HASTA SAYISI': 'icuPatient',
-						'TOPLAM ENTUBE HASTA SAYISI': 'intubatedPatient',
+						'HASTALARDA ZATÜRRE ORANI (%)': 'pneumoniaPercent',
+						'AĞIR HASTA SAYISI': 'seriouslyIllPatient',
 						'TOPLAM İYİLEŞEN HASTA SAYISI': 'recoveredPatient'}
 	todayLabelsTRtoEN = {'BUGÜNKÜ TEST SAYISI': 'test',
-						'BUGÜNKÜ VAKA SAYISI': 'case',
+						'BUGÜNKÜ HASTA SAYISI': 'case',
 						'BUGÜNKÜ VEFAT SAYISI': 'death',
 						'BUGÜNKÜ İYİLEŞEN SAYISI': 'recoveredPatient'}
 
@@ -128,10 +128,10 @@ def prepareData():
 		for span in spans:
 			key = re.sub('<s.*?>|<\/s.*?>', '', span[0]).replace('<br>', ' ')
 			value = re.sub('<s.*?>|<\/s.*?>', '', span[1]).replace('<br>', ' ')
-			if key.startswith('TOP'):
-				totalData[key] = value
-			else:
+			if key.startswith('BUGÜN'):
 				todayData[key] = value
+			else:
+				totalData[key] = value
 			print(key, ':', value)
 
 
@@ -157,7 +157,7 @@ def getData():
 
 
 def sendTelegram():
-	text = 'Son güncellenme tarihi: *{}*\n'.format(lastUpdated)
+	text = 'SON GÜNCELLENME TARİHİ: *{}*\n\n'.format(lastUpdated)
 	for key, value in todayData.items():
 		text += '_' + key + ':_  '
 		text += '*' + value + '*'
@@ -167,10 +167,10 @@ def sendTelegram():
 		text += '_' + key + ':_  '
 		text += '*' + value + '*'
 		text += '\n'
-	text = text.replace('.', '\\.').replace('-', '\\-')
+	text = text.replace('.', '\\.').replace('-', '\\-').replace('%', '\\%').replace('(', '\\(').replace(')', '\\)')
 
 	headers = {'Content-Type': 'application/json'}
-	payload = {'chat_id': telegramChatID, 'parse_mode': 'MarkdownV2', "text": text}
+	payload = {'chat_id': telegramChatID, 'parse_mode': 'MarkdownV2', 'text': text}
 
 	telegramURL = 'https://api.telegram.org/' + telegramAPI_Token + '/sendMessage'
 	print(telegramURL)
