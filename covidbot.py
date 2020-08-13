@@ -11,7 +11,7 @@ jsonToday = {}
 jsonTotal = {}
 jsonAll = {}
 jsonDataset = {}
-sentData = {'today': {}, 'total': {}}
+sentData = {'today': {}, 'total': {}, 'date': ''}
 sourceCode = ''
 sourceCleaned = ''
 lastUpdated = ''
@@ -156,7 +156,7 @@ def getData():
 
 		getLastUpdate()
 		prepareData()
-		if (sentData['total'] != totalData) or (sentData['today'] != todayData):
+		if (sentData['total'] != totalData) or (sentData['today'] != todayData) or (sentData['date'] != lastUpdated):
 			sendTelegram()
 		createJSONs()
 		prepareDataset()
@@ -189,6 +189,7 @@ def sendTelegram():
 		print(r.status_code)
 		sentData['today'] = dict(todayData)
 		sentData['total'] = dict(totalData)
+		sentData['date'] = str(lastUpdated)
 	except Exception as e:
 		print('>>>[ERROR] Cannot send message !', e)
 
