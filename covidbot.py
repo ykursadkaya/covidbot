@@ -29,7 +29,8 @@ monthsTRtoIndex = {'OCAK': '01', 'ŞUBAT': '02', 'MART': '03',
 				   'EKİM': '10', 'KASIM': '11', 'ARALIK': '12'}
 # newLine = '%0A'
 
-replaceTR_HTML = (lambda x: x.replace('&#x11E;', 'Ğ').replace('&#x130;', 'İ').replace('&#x15E;', 'Ş'))
+replaceTR_HTML = (lambda x: x.replace('&#x11E;', 'Ğ').replace('&#x130;', 'İ')
+				  .replace('&#x15E;', 'Ş').replace('&#xDC;', 'Ü'))
 replaceTRUpper = (lambda x: x
 				  .replace('Ç', 'C').replace('İ', 'I').replace('Ğ', 'G')
 				  .replace('Ö', 'O').replace('Ş', 'S').replace('Ü', 'U'))
